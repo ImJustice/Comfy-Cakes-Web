@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comfy Cakes Web | Fábrica de Pasteles</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- header -->
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon">
+        <svg class="svg-icon" viewBox="0 0 24 24" width="26" height="26" fill="none">
+          <path d="M4 17h16v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3z" fill="#f43f5e"/>
+          <path d="M5 12h14v5H5z" fill="#fda4af"/>
+          <path d="M12 7v5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="5" r="1.5" fill="#f59e0b"/>
+        </svg>
+      </span>
+      <span class="brand-name">Comfy Cakes Web</span>
+    </div>
+    <div class="header-controls">
+      <button id="btn-sound-toggle" class="icon-btn" title="Silenciar / Activar sonido" aria-label="Control de sonido">
+        <span id="sound-icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5-1.23L6.5 6H3c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h3.5l5 4c.66.53 1.5.06 1.5-.78V2.78c0-.84-.84-1.31-1.5-.78zm-1 3.41v13.18L7.09 15H4V9h3.09L10.5 5.41zM14 8.78v6.44c1.17-.49 2-1.63 2-3.22s-.83-2.73-2-3.22z"/>
+          </svg>
+        </span>
+      </button>
+      <button id="btn-theme-toggle" class="icon-btn" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema">
+        <span id="theme-icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12.3 2a10 10 0 0 0-1.9 19.8 10 10 0 0 0 11.5-11.5A10 10 0 0 1 12.3 2z"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- pantalla inicio -->
+  <main id="start-screen" class="screen active">
+    <div class="hero-card">
+      <h1 class="hero-title">Comfy Cakes Web</h1>
+      <p class="hero-subtitle">¡Prepárate! Arma y decora los pasteles que piden los clientes antes de que se acabe el tiempo.</p>
+      
+      <div class="high-score-banner">
+        <span class="trophy-icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="22" height="22" fill="#f59e0b">
+            <path d="M19 4h-2V3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v1H5a3 3 0 0 0-3 3v2a4 4 0 0 0 3.7 4A7 7 0 0 0 11 16.9V19H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2h-3v-2.1a7 7 0 0 0 5.3-3.9 4 4 0 0 0 3.7-4V7a3 3 0 0 0-3-3zM4 9V7a1 1 0 0 1 1-1h2v4a2 2 0 0 1-1.4-.4A2 2 0 0 1 4 9zm16 0a2 2 0 0 1-.6.6 2 2 0 0 1-1.4.4V6h2a1 1 0 0 1 1 1z"/>
+          </svg>
+        </span>
+        <span>Récord Actual: <strong id="start-high-score">0</strong> pts</span>
+      </div>
+
+      <section class="instructions-panel">
+        <h3>¿Cómo jugar?</h3>
+        <ol>
+          <li><strong>Revisa el pedido:</strong> Cada cliente pide un pastel con forma, sabor, cubierta y adorno específicos.</li>
+          <li><strong>Arma el pastel:</strong> Selecciona los ingredientes en cada estación.</li>
+          <li><strong>Entrégalo rápido:</strong> Entrega el pedido antes de que se acabe el tiempo para ganar puntos y bonificación.</li>
+          <li><strong>¡Cuidado con los errores!</strong> Tienes 3 vidas. Cada 5 pasteles correctos subes de nivel y el tiempo se reduce.</li>
+        </ol>
+      </section>
+
+      <div class="hero-actions">
+        <button id="btn-start-game" class="btn btn-primary btn-large">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+          <span>Jugar Ahora</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- pantalla juego -->
+  <main id="game-screen" class="screen">
+    <!-- hud -->
+    <section class="game-hud">
+      <div class="hud-item hud-level">
+        <span class="hud-label">Nivel</span>
+        <span id="hud-level-val" class="hud-val">1</span>
+      </div>
+      <div class="hud-item hud-score">
+        <span class="hud-label">Puntaje</span>
+        <span id="hud-score-val" class="hud-val">0</span>
+      </div>
+      <div class="hud-item hud-record">
+        <span class="hud-label">Récord</span>
+        <span id="hud-record-val" class="hud-val">0</span>
+      </div>
+      <div class="hud-item hud-lives">
+        <span class="hud-label">Vidas</span>
+        <div id="lives-container" class="lives-icons" aria-label="3 vidas restantes">
+          <span class="heart active">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </span>
+          <span class="heart active">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </span>
+          <span class="heart active">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="hud-actions">
+        <button id="btn-pause" class="btn btn-secondary btn-sm" title="Pausar juego">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
+          </svg>
+          <span>Pausa</span>
+        </button>
+        <button id="btn-restart-game" class="btn btn-secondary btn-sm" title="Reiniciar partida">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8m0-5v5h-5"/>
+          </svg>
+          <span>Reiniciar</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- timer -->
+    <div class="timer-wrapper">
+      <div class="timer-info">
+        <span>
+          <svg class="svg-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13" r="8"/>
+            <path d="M12 9v4l2.5 2.5M10 2h4M12 2v3"/>
+          </svg>
+          Tiempo restante
+        </span>
+        <span id="timer-seconds">30s</span>
+      </div>
+      <div class="timer-bar-bg">
+        <div id="timer-bar-fill" class="timer-bar-fill"></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <!-- pedido -->
+      <aside class="order-card" aria-label="Pedido actual del cliente">
+        <div class="order-header">
+          <span class="order-badge">Pedido #<span id="order-number">1</span></span>
+          <h2 class="order-title">Pedido</h2>
+        </div>
+        
+        <div class="order-preview-container">
+          <div id="order-preview-plate" class="cake-display-plate mini-plate">
+            <div id="order-cake-visual" class="cake-assembly">
+              <div class="cake-layer-shadow"></div>
+              <div class="cake-layer-base"></div>
+              <div class="cake-layer-icing"></div>
+              <div class="cake-layer-topping"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-specs-list">
+          <div class="order-spec-item" id="order-spec-shape">
+            <span class="spec-label">Forma:</span>
+            <span class="spec-value">-</span>
+          </div>
+          <div class="order-spec-item" id="order-spec-flavor">
+            <span class="spec-label">Bizcocho:</span>
+            <span class="spec-value">-</span>
+          </div>
+          <div class="order-spec-item" id="order-spec-icing">
+            <span class="spec-label">Cubierta:</span>
+            <span class="spec-value">-</span>
+          </div>
+          <div class="order-spec-item" id="order-spec-topping">
+            <span class="spec-label">Adorno:</span>
+            <span class="spec-value">-</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- cinta y pastel -->
+      <section class="conveyor-stage">
+        <!-- feedback -->
+        <div id="game-feedback-banner" class="feedback-banner hidden" role="alert">
+          <div class="feedback-content">
+            <span class="feedback-icon" id="feedback-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+              </svg>
+            </span>
+            <div class="feedback-text">
+              <strong id="feedback-title">¡Perfecto!</strong>
+              <p id="feedback-desc">+100 puntos</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="conveyor-belt-container">
+          <div class="conveyor-tracks">
+            <div class="conveyor-rollers"></div>
+          </div>
+          
+          <div id="conveyor-cart" class="conveyor-cart">
+            <div class="dish-base"></div>
+            <div id="player-cake-visual" class="cake-assembly">
+              <div class="cake-layer-shadow"></div>
+              <div class="cake-layer-base">
+                <span class="empty-cake-hint">Elige la forma</span>
+              </div>
+              <div class="cake-layer-icing"></div>
+              <div class="cake-layer-topping"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="selection-status-bar">
+          <div class="status-chip" id="chip-shape">Forma: <em>Vacío</em></div>
+          <div class="status-chip" id="chip-flavor">Bizcocho: <em>Vacío</em></div>
+          <div class="status-chip" id="chip-icing">Cubierta: <em>Vacío</em></div>
+          <div class="status-chip" id="chip-topping">Adorno: <em>Vacío</em></div>
+        </div>
+
+        <div class="conveyor-actions">
+          <button id="btn-discard-cake" class="btn btn-outline" title="Descartar sin penalización">
+            <span>Descartar</span>
+          </button>
+          <button id="btn-submit-cake" class="btn btn-primary btn-submit" title="Entregar para calificar">
+            <span>Entregar</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- selectores -->
+    <section class="selectors-panel">
+      <div class="selector-group">
+        <div class="group-header">
+          <span class="group-num">1</span>
+          <h3>Forma</h3>
+        </div>
+        <div class="options-grid" data-category="shape">
+          <button type="button" class="option-btn" data-value="round">
+            <span class="opt-preview preview-shape-round"></span>
+            <span class="opt-label">Redondo</span>
+          </button>
+          <button type="button" class="option-btn" data-value="rectangle">
+            <span class="opt-preview preview-shape-rect"></span>
+            <span class="opt-label">Cuadrado</span>
+          </button>
+          <button type="button" class="option-btn" data-value="heart">
+            <span class="opt-preview preview-shape-heart"></span>
+            <span class="opt-label">Corazón</span>
+          </button>
+          <button type="button" class="option-btn" data-value="rectangular">
+            <span class="opt-preview preview-shape-rect-long"></span>
+            <span class="opt-label">Rectangular</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <div class="group-header">
+          <span class="group-num">2</span>
+          <h3>Sabor</h3>
+        </div>
+        <div class="options-grid" data-category="flavor">
+          <button type="button" class="option-btn" data-value="chocolate">
+            <span class="opt-color-dot dot-chocolate"></span>
+            <span class="opt-label">Chocolate</span>
+          </button>
+          <button type="button" class="option-btn" data-value="vanilla">
+            <span class="opt-color-dot dot-vanilla"></span>
+            <span class="opt-label">Vainilla</span>
+          </button>
+          <button type="button" class="option-btn" data-value="strawberry">
+            <span class="opt-color-dot dot-strawberry"></span>
+            <span class="opt-label">Fresa</span>
+          </button>
+          <button type="button" class="option-btn" data-value="lemon">
+            <span class="opt-color-dot dot-lemon"></span>
+            <span class="opt-label">Limón</span>
+          </button>
+          <button type="button" class="option-btn" data-value="arequipe">
+            <span class="opt-color-dot dot-arequipe"></span>
+            <span class="opt-label">Arequipe</span>
+          </button>
+          <button type="button" class="option-btn" data-value="cafe">
+            <span class="opt-color-dot dot-cafe"></span>
+            <span class="opt-label">Café</span>
+          </button>
+          <button type="button" class="option-btn" data-value="maracuya">
+            <span class="opt-color-dot dot-maracuya"></span>
+            <span class="opt-label">Maracuyá</span>
+          </button>
+          <button type="button" class="option-btn" data-value="mora">
+            <span class="opt-color-dot dot-mora"></span>
+            <span class="opt-label">Mora</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <div class="group-header">
+          <span class="group-num">3</span>
+          <h3>Cubierta</h3>
+        </div>
+        <div class="options-grid" data-category="icing">
+          <button type="button" class="option-btn" data-value="white-cream">
+            <span class="opt-color-dot dot-white-cream"></span>
+            <span class="opt-label">Crema de Chantilly</span>
+          </button>
+          <button type="button" class="option-btn" data-value="chocolate-fudge">
+            <span class="opt-color-dot dot-choc-fudge"></span>
+            <span class="opt-label">Chocolate</span>
+          </button>
+          <button type="button" class="option-btn" data-value="caramel">
+            <span class="opt-color-dot dot-caramel"></span>
+            <span class="opt-label">Arequipe</span>
+          </button>
+          <button type="button" class="option-btn" data-value="pink-glaze">
+            <span class="opt-color-dot dot-pink-glaze"></span>
+            <span class="opt-label">Guayaba</span>
+          </button>
+          <button type="button" class="option-btn" data-value="maracuya-glaze">
+            <span class="opt-color-dot dot-maracuya-glaze"></span>
+            <span class="opt-label">Maracuyá</span>
+          </button>
+          <button type="button" class="option-btn" data-value="mora-glaze">
+            <span class="opt-color-dot dot-mora-glaze"></span>
+            <span class="opt-label">Mora</span>
+          </button>
+          <button type="button" class="option-btn" data-value="chantilly">
+            <span class="opt-color-dot dot-chantilly"></span>
+            <span class="opt-label">Merengue</span>
+          </button>
+          <button type="button" class="option-btn" data-value="burnt-caramel">
+            <span class="opt-color-dot dot-burnt-caramel"></span>
+            <span class="opt-label">Panela</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <div class="group-header">
+          <span class="group-num">4</span>
+          <h3>Adorno</h3>
+        </div>
+        <div class="options-grid" data-category="topping">
+          <button type="button" class="option-btn" data-value="cherry">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <path d="M16 6 C16 11, 10 14, 9 19 M16 6 C17 11, 23 14, 23 18" fill="none" stroke="#65a30d" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M16 6 C18 4, 22 5, 23 7 C21 9, 17 8, 16 6 Z" fill="#84cc16"/>
+                <circle cx="9" cy="21" r="5.5" fill="#dc2626"/>
+                <circle cx="7.5" cy="19.5" r="1.5" fill="#fca5a5"/>
+                <circle cx="23" cy="20" r="5.5" fill="#ef4444"/>
+                <circle cx="21.5" cy="18.5" r="1.5" fill="#fca5a5"/>
+              </svg>
+            </span>
+            <span class="opt-label">Cereza</span>
+          </button>
+          <button type="button" class="option-btn" data-value="berries">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <path d="M16 7 C13 4, 10 5, 11 8 C12 6, 16 6, 16 7 C16 6, 20 6, 21 8 C22 5, 19 4, 16 7 Z" fill="#65a30d"/>
+                <path d="M11 10 C9 15, 12 25, 16 27 C20 25, 23 15, 21 10 C19 8, 13 8, 11 10 Z" fill="#ef4444"/>
+                <circle cx="14" cy="14" r="0.8" fill="#fef08a"/>
+                <circle cx="18" cy="14" r="0.8" fill="#fef08a"/>
+                <circle cx="16" cy="18" r="0.8" fill="#fef08a"/>
+                <circle cx="13" cy="20" r="0.8" fill="#fef08a"/>
+                <circle cx="19" cy="20" r="0.8" fill="#fef08a"/>
+                <circle cx="16" cy="23" r="0.8" fill="#fef08a"/>
+              </svg>
+            </span>
+            <span class="opt-label">Fresa</span>
+          </button>
+          <button type="button" class="option-btn" data-value="sprinkles">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <rect x="7" y="11" width="7" height="3" rx="1.5" fill="#3b82f6" transform="rotate(-25 10 12)"/>
+                <rect x="18" y="8" width="7" height="3" rx="1.5" fill="#ef4444" transform="rotate(35 21 9)"/>
+                <rect x="14" y="15" width="7" height="3" rx="1.5" fill="#eab308" transform="rotate(-15 17 16)"/>
+                <rect x="8" y="21" width="7" height="3" rx="1.5" fill="#10b981" transform="rotate(40 11 22)"/>
+                <rect x="19" y="20" width="7" height="3" rx="1.5" fill="#ec4899" transform="rotate(-30 22 21)"/>
+                <circle cx="7" cy="8" r="1.5" fill="#a855f7"/>
+                <circle cx="26" cy="15" r="1.5" fill="#06b6d4"/>
+              </svg>
+            </span>
+            <span class="opt-label">Chispas</span>
+          </button>
+          <button type="button" class="option-btn" data-value="candle">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <path d="M16 4 C14 8, 14 10, 16 11 C18 10, 18 8, 16 4 Z" fill="#f59e0b"/>
+                <path d="M16 6 C15 8, 15 9.5, 16 10.5 C17 9.5, 17 8, 16 6 Z" fill="#fef08a"/>
+                <line x1="16" y1="11" x2="16" y2="13" stroke="#475569" stroke-width="1.5"/>
+                <rect x="13.5" y="13" width="5" height="15" rx="1.5" fill="#38bdf8"/>
+                <line x1="13.5" y1="17" x2="18.5" y2="15" stroke="#ffffff" stroke-width="1.8"/>
+                <line x1="13.5" y1="22" x2="18.5" y2="20" stroke="#ffffff" stroke-width="1.8"/>
+              </svg>
+            </span>
+            <span class="opt-label">Vela</span>
+          </button>
+          <button type="button" class="option-btn" data-value="barquillo">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <g transform="rotate(35 16 16)">
+                  <rect x="13" y="4" width="6" height="24" rx="2" fill="#d97706"/>
+                  <line x1="13" y1="9" x2="19" y2="7" stroke="#451a03" stroke-width="1.8"/>
+                  <line x1="13" y1="15" x2="19" y2="13" stroke="#451a03" stroke-width="1.8"/>
+                  <line x1="13" y1="21" x2="19" y2="19" stroke="#451a03" stroke-width="1.8"/>
+                </g>
+              </svg>
+            </span>
+            <span class="opt-label">Barquillo</span>
+          </button>
+          <button type="button" class="option-btn" data-value="cookie">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="11" fill="#d97706"/>
+                <circle cx="16" cy="16" r="9.5" fill="#f59e0b"/>
+                <circle cx="12" cy="12" r="1.8" fill="#451a03"/>
+                <circle cx="19" cy="11" r="1.8" fill="#451a03"/>
+                <circle cx="16" cy="17" r="2" fill="#451a03"/>
+                <circle cx="11" cy="19" r="1.6" fill="#451a03"/>
+                <circle cx="20" cy="19" r="1.7" fill="#451a03"/>
+              </svg>
+            </span>
+            <span class="opt-label">Galleta</span>
+          </button>
+          <button type="button" class="option-btn" data-value="melocoton">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <path d="M16 8 C18 5, 23 6, 22 9 C20 10, 17 9, 16 8 Z" fill="#65a30d"/>
+                <path d="M16 11 C11 11, 7 15, 8 20 C9 25, 14 27, 16 27 C18 27, 23 25, 24 20 C25 15, 21 11, 16 11 Z" fill="#fb923c"/>
+                <path d="M16 11 C13 11, 10 14, 11 19 C12 23, 15 25, 16 27 C16 22, 16 16, 16 11 Z" fill="#f87171" opacity="0.6"/>
+              </svg>
+            </span>
+            <span class="opt-label">Melocotón</span>
+          </button>
+          <button type="button" class="option-btn" data-value="almonds">
+            <span class="opt-svg">
+              <svg viewBox="0 0 32 32">
+                <g transform="rotate(-20 13 17)">
+                  <path d="M13 10 C17 13, 17 21, 13 24 C9 21, 9 13, 13 10 Z" fill="#92400e"/>
+                  <path d="M13 11 C16 14, 16 20, 13 23 C10.5 20, 10.5 14, 13 11 Z" fill="#b45309"/>
+                </g>
+                <g transform="rotate(25 21 18)">
+                  <path d="M21 11 C25 14, 25 21, 21 24 C17 21, 17 14, 21 11 Z" fill="#78350f"/>
+                  <path d="M21 12 C24 15, 24 20, 21 23 C18.5 20, 18.5 15, 21 12 Z" fill="#92400e"/>
+                </g>
+              </svg>
+            </span>
+            <span class="opt-label">Almendras</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- game over -->
+  <main id="game-over-screen" class="screen">
+    <div class="game-over-card">
+      <div class="game-over-icon">
+        <svg viewBox="0 0 48 48" width="56" height="56" fill="none">
+          <path d="M8 32h32v8a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4v-8z" fill="#f43f5e"/>
+          <path d="M11 20h26v12H11z" fill="#fda4af"/>
+          <path d="M24 10v6" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="24" cy="7" r="2.5" fill="#f59e0b"/>
+        </svg>
+      </div>
+      <h1 class="game-over-title">¡Se acabó la partida!</h1>
+      <p class="game-over-desc">Se acabaron las vidas. ¡Inténtalo de nuevo!</p>
+
+      <div class="stats-summary-grid">
+        <div class="stat-box">
+          <span class="stat-label">Puntaje Final</span>
+          <span id="final-score-val" class="stat-value highlight">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Récord Máximo</span>
+          <span id="final-record-val" class="stat-value">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Nivel Alcanzado</span>
+          <span id="final-level-val" class="stat-value">1</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Pasteles Entregados</span>
+          <span id="final-cakes-val" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <div id="new-record-badge" class="new-record-badge hidden">
+        <svg class="svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="#f59e0b" style="margin-right: 6px;">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <span>¡Felicidades! Nuevo récord personal.</span>
+      </div>
+
+      <div class="game-over-actions">
+        <button id="btn-play-again" class="btn btn-primary btn-large">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8m0-5v5h-5"/>
+          </svg>
+          <span>Jugar de Nuevo</span>
+        </button>
+        <button id="btn-go-menu" class="btn btn-secondary">
+          <svg class="svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Menú Principal</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- modal pausa -->
+  <div id="pause-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+    <div class="modal-card">
+      <h2 id="pause-title" class="modal-title">
+        <svg class="svg-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="margin-right: 4px;">
+          <rect x="6" y="4" width="4" height="16" rx="1"/>
+          <rect x="14" y="4" width="4" height="16" rx="1"/>
+        </svg>
+        Juego en Pausa
+      </h2>
+      <p class="modal-desc">El juego está en pausa. Continúa cuando estés listo.</p>
+      <div class="modal-actions">
+        <button id="btn-resume-game" class="btn btn-primary">Seguir Jugando</button>
+        <button id="btn-pause-menu" class="btn btn-secondary">Ir al Menú</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
